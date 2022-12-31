@@ -1,6 +1,12 @@
 const Note = require("../models/note");
 const User = require("../models/user");
 
+const userInfo = {
+  username: "herdeybayor",
+  name: "Sherifdeen Adebayo",
+  password: "test",
+};
+
 const initialNotes = [
   {
     content: "HTML is easy",
@@ -37,4 +43,5 @@ module.exports = {
   nonExistingId,
   notesInDb,
   usersInDb,
+  userInfo,
 };

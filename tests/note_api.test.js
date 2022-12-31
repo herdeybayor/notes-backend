@@ -5,6 +5,16 @@ const app = require("../app");
 const api = supertest(app);
 
 const Note = require("../models/note");
+const User = require("../models/user");
+
+let token = "";
+
+beforeAll(async () => {
+  await User.deleteMany({});
+  await api.post("/api/users").send(helper.userInfo);
+  const response = await api.post("/api/login").send(helper.userInfo);
+  token = response.body.token;
+});
 
 beforeEach(async () => {
   await Note.deleteMany({});
@@ -75,6 +85,7 @@ describe("addition of a new note", () => {
     await api
       .post("/api/notes")
       .send(newNote)
+      .set("Authorization", `Bearer ${token}`)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -90,7 +101,11 @@ describe("addition of a new note", () => {
       important: true,
     };
 
-    await api.post("/api/notes").send(newNote).expect(400);
+    await api
+      .post("/api/notes")
+      .send(newNote)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(400);
 
     const notesAtEnd = await helper.notesInDb();
 
